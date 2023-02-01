@@ -1,7 +1,8 @@
-package com.example.springmvch2blog;
+package com.example.springmvch2blog.controller;
 
 
 import com.example.springmvch2blog.config.CookieAuthenticationFilter;
+import com.example.springmvch2blog.config.UsernamePasswordFilter;
 import com.example.springmvch2blog.dto.RegisterUserDto;
 import com.example.springmvch2blog.dto.UserDto;
 import com.example.springmvch2blog.service.AuthenticationService;
@@ -11,28 +12,34 @@ import com.example.springmvch2blog.util.UserDtoUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
 @RestController
-@RequestMapping("auth")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthenticationController {
 
     private final UserService userService;
     private final JwtUtil jwtUtil;
 
+    private static final Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
 
     @PostMapping("/login")
-    public ResponseEntity<UserDto> signIn(@AuthenticationPrincipal UserDto user,
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<UserDto> signIn(@AuthenticationPrincipal UserDto user
+            ,
                                           HttpServletResponse servletResponse) {
+
+
+        logger.warn("So principal is" + user);
 
         Cookie authCookie = new Cookie(CookieAuthenticationFilter.ACCESS_COOKIE_NAME, jwtUtil.generateToken(user) );
         authCookie.setHttpOnly(true);
@@ -41,10 +48,10 @@ public class AuthenticationController {
         authCookie.setPath("/");
 
         Cookie refreshCookie = new Cookie(CookieAuthenticationFilter.REFRESH_COOKIE_NAME, jwtUtil.generateToken(user) );
-        authCookie.setHttpOnly(true);
-        authCookie.setSecure(true);
-        authCookie.setMaxAge((int) Duration.of(1, ChronoUnit.DAYS).toSeconds());
-        authCookie.setPath("/");
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setSecure(true);
+        refreshCookie.setMaxAge(100000);
+        refreshCookie.setPath("/");
 
 
 

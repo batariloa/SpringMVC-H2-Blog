@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class SpringMvcH2BlogApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(SpringMvcH2BlogApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(SpringMvcH2BlogApplication.class, args);
+    }
 
 }

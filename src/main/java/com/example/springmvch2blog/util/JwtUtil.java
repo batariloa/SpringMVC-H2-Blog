@@ -1,8 +1,9 @@
-package com.batariloa.reactiveblogbackend.util;
+package com.example.springmvch2blog.util;
 
 
-import com.batariloa.reactiveblogbackend.controller.BlogPostController;
-import com.batariloa.reactiveblogbackend.user.User;
+
+import com.example.springmvch2blog.dto.UserDto;
+import com.example.springmvch2blog.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtParser;
@@ -28,7 +29,7 @@ public class JwtUtil {
     private String expirationTime;
 
     private Key key;
-    private static final Logger logger = LoggerFactory.getLogger(BlogPostController.class);
+    private static final Logger logger = LoggerFactory.getLogger(JwtUtil.class);
 
     @PostConstruct
     public void init() {
@@ -60,16 +61,14 @@ public class JwtUtil {
         return expiration.before(new Date());
     }
 
-    public String generateToken(User user) {
+    public String generateToken(UserDto user) {
 
         Map<String, Object> claims = new HashMap<>();
 
-        logger.warn("SET ROLES OF" + user.getRole()
-                                         .getValue());
-        claims.put("role", user.getRole()
-                               .getValue());
+        logger.warn("SET ROLES OF" + user.role());
+        claims.put("role", user.role());
 
-        return doGenerateToken(claims, user.getUsername());
+        return doGenerateToken(claims, user.username());
     }
 
     private String doGenerateToken(Map<String, Object> claims, String username) {
@@ -94,9 +93,9 @@ public class JwtUtil {
         Map<String, Object> claims = new HashMap<>();
 
         logger.warn("SET ROLES OF" + user.getRole()
-                                         .getValue());
+                                        );
         claims.put("role", user.getRole()
-                               .getValue());
+                             );
 
         return doGenerateRefreshToken(claims, user.getUsername());
     }
