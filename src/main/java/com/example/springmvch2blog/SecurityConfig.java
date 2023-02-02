@@ -52,9 +52,9 @@ public class SecurityConfig {
                 .httpBasic()
                 .and()
                 .addFilterBefore(new UsernamePasswordFilter(userAuthenticationManager), BasicAuthenticationFilter.class)
-                .addFilterBefore(new CookieAuthenticationFilter(userAuthenticationManager), UsernamePasswordFilter.class)
-                .addFilterBefore(new RefreshTokenFilter(userAuthenticationManager, authenticationService), CookieAuthenticationFilter.class)
-
+                .addFilterBefore(new RefreshTokenFilter(userAuthenticationManager, authenticationService), UsernamePasswordFilter.class)
+                .addFilterBefore(new CookieAuthenticationFilter(userAuthenticationManager, authenticationService), RefreshTokenFilter.class)
+                //AccessTokenFilter is called before the RefreshTokenFilter
                 .csrf()
                 .disable()
 

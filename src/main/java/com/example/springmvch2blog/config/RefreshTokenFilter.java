@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -37,13 +39,10 @@ public class RefreshTokenFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        logger.warn("Running refresh token filter.");
+        logger.warn("Anonymous user." + SecurityContextHolder.getContext().getAuthentication());
 
-        //if accessToken is expired
-        Optional<Cookie> accessTokenCookie = Stream.of(Optional.ofNullable(request.getCookies())
-                                                               .orElse(new Cookie[0]))
-                                                   .filter(cookie-> ACCESS_COOKIE_NAME.equals(cookie.getName()))
-                                                   .findFirst();
+
+        logger.warn("Running refresh token filter.");
 
         Optional<Cookie> refreshTokenCookie = Stream.of(Optional.ofNullable(request.getCookies())
                                                                 .orElse(new Cookie[0]))

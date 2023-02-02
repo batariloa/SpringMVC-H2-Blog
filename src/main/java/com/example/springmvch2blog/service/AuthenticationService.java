@@ -50,12 +50,13 @@ public class AuthenticationService {
 
         Date expiration= jwtUtil.getExpirationDateFromToken(refreshToken);
         logger.warn("EXPIRATION IN REFRESH TOKEN"+ expiration.getTime());
+        logger.warn("USER DTO OF NEW ACCESS TOKEN" + UserDtoUtil.toDto(findByToken(refreshToken)).toString());
         String newAccessToken = jwtUtil.generateToken(UserDtoUtil.toDto(findByToken(refreshToken)));
         //overwrite the old access token
         Cookie newAccessCookie = new Cookie(ACCESS_COOKIE_NAME, newAccessToken);
         newAccessCookie.setPath("/");
         newAccessCookie.setHttpOnly(true);
-        newAccessCookie.setMaxAge(5000000);
+        newAccessCookie.setMaxAge(5);
 
         return newAccessCookie;
     }

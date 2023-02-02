@@ -1,5 +1,6 @@
 package com.example.springmvch2blog.config;
 
+import com.example.springmvch2blog.service.AuthenticationService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -21,6 +22,7 @@ public class CookieAuthenticationFilter extends OncePerRequestFilter {
     public static final String REFRESH_COOKIE_NAME="refreshToken";
 
     private final UserAuthenticationManager userAuthenticationManager;
+    private final AuthenticationService authenticationService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -34,15 +36,21 @@ public class CookieAuthenticationFilter extends OncePerRequestFilter {
                 .findFirst();
 
 
+        boolean tokenCreated = accessTokenCookie.map(cookie -> {
+                                                    if (authenticationService.validateToken(cookie.getValue())) {
+                                                        userAuthenticationManager.authenticate(new PreAuthenticatedAuthenticationToken(cookie.getValue(), null));
+                                                        return true;
+                                                    }
+                                                    return false;
+                                                }).filter(result -> result)
+                                                .isPresent();
 
-        accessTokenCookie.ifPresent(cookie ->
-                userAuthenticationManager.authenticate(
-                                new PreAuthenticatedAuthenticationToken(cookie.getValue(), null)
-                        )
-                );
+        //if token is created, do not call other authentication filters
+        if (!tokenCreated) {
+            filterChain.doFilter(request, response);
+        }
 
 
-        filterChain.doFilter(request, response);
 
 
 }
