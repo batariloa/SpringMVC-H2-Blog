@@ -44,7 +44,7 @@ public class AuthenticationController {
         Cookie authCookie = new Cookie(CookieAuthenticationFilter.ACCESS_COOKIE_NAME, jwtUtil.generateToken(user) );
         authCookie.setHttpOnly(true);
         authCookie.setSecure(true);
-        authCookie.setMaxAge((int) Duration.of(1, ChronoUnit.DAYS).toSeconds());
+        authCookie.setMaxAge(5000);
         authCookie.setPath("/");
 
         Cookie refreshCookie = new Cookie(CookieAuthenticationFilter.REFRESH_COOKIE_NAME, jwtUtil.generateToken(user) );

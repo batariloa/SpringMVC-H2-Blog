@@ -76,7 +76,7 @@ public class JwtUtil {
         Long expirationTimeLong = Long.parseLong(expirationTime);
 
         final Date createdDate = new Date();
-        final Date expirationDate = new Date(createdDate.getTime() + expirationTimeLong * 5);
+        final Date expirationDate = new Date(createdDate.getTime() + expirationTimeLong * 5000);
 
 
         return Jwts.builder()
