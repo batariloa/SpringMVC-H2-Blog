@@ -1,11 +1,9 @@
 package com.example.springmvch2blog.controller;
 
 
-import com.example.springmvch2blog.config.CookieAuthenticationFilter;
-import com.example.springmvch2blog.config.RefreshTokenFilter;
 import com.example.springmvch2blog.dto.RegisterUserDto;
 import com.example.springmvch2blog.dto.UserDto;
-import com.example.springmvch2blog.entity.User;
+import com.example.springmvch2blog.service.AuthenticationService;
 import com.example.springmvch2blog.service.UserService;
 import com.example.springmvch2blog.util.JwtUtil;
 import jakarta.servlet.http.Cookie;
@@ -24,6 +22,7 @@ public class AuthenticationController {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
     private final UserService userService;
+    private final AuthenticationService authenticationService;
     private final JwtUtil jwtUtil;
 
     @PostMapping("/login")
@@ -33,30 +32,11 @@ public class AuthenticationController {
             HttpServletResponse servletResponse
     ) {
 
-
         logger.warn("So principal is" + user);
 
-        Cookie authCookie = new Cookie(CookieAuthenticationFilter.ACCESS_COOKIE_NAME, jwtUtil.generateToken(user));
-        authCookie.setHttpOnly(true);
-        authCookie.setSecure(true);
-        authCookie.setMaxAge(5);
-        authCookie.setPath("/");
-
-        String refreshToken = jwtUtil.generateToken(user);
-        User userDb = userService.loadByUsername(user.getUsername());
-        userDb.setRefreshToken(refreshToken);
-
-
-        Cookie refreshCookie = new Cookie(RefreshTokenFilter.REFRESH_COOKIE_NAME, refreshToken);
-        refreshCookie.setHttpOnly(true);
-        refreshCookie.setSecure(true);
-        refreshCookie.setMaxAge(10000000);
-        refreshCookie.setPath("/");
-
-
+        Cookie authCookie = authenticationService.generateAccesssTokenCookie(user);
+        Cookie refreshCookie = authenticationService.generateRefreshTokenCookie(user);
         servletResponse.addCookie(authCookie);
-
-
         servletResponse.addCookie(refreshCookie);
 
         return ResponseEntity.ok(user);

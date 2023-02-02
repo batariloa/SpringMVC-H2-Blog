@@ -24,8 +24,10 @@ public class JwtUtil {
     private static final Logger logger = LoggerFactory.getLogger(JwtUtil.class);
     @Value("${springbootwebfluxjjwt.jjwt.secret}")
     private String secret;
-    @Value("${springbootwebfluxjjwt.jjwt.expiration}")
-    private String expirationTime;
+    @Value("${jjwt.expirationTimeAccessToken}")
+    private String expirationTimeAccessToken;
+    @Value("${jjwt.expirationTimeRefreshToken}")
+    private String expirationTimeRefreshToken;
     private Key key;
 
     @PostConstruct
@@ -58,7 +60,7 @@ public class JwtUtil {
         return expiration.before(new Date());
     }
 
-    public String generateToken(UserDto user) {
+    public String generateAccessToken(UserDto user) {
 
         Map<String, Object> claims = new HashMap<>();
 
@@ -73,10 +75,10 @@ public class JwtUtil {
             String username
     ) {
 
-        Long expirationTimeLong = Long.parseLong(expirationTime);
+        Long expirationTimeLong = Long.parseLong(expirationTimeAccessToken);
 
         final Date createdDate = new Date();
-        final Date expirationDate = new Date(createdDate.getTime() + 500000);
+        final Date expirationDate = new Date(createdDate.getTime() + expirationTimeLong);
 
 
         return Jwts.builder()
@@ -103,7 +105,7 @@ public class JwtUtil {
             String username
     ) {
 
-        Long expirationTimeLong = Long.parseLong(expirationTime);
+        Long expirationTimeLong = Long.parseLong(expirationTimeRefreshToken);
 
         final Date createdDate = new Date();
         final Date expirationDate = new Date(createdDate.getTime() + expirationTimeLong * 90000);

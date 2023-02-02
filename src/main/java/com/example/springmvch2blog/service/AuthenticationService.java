@@ -1,5 +1,6 @@
 package com.example.springmvch2blog.service;
 
+import com.example.springmvch2blog.config.RefreshTokenFilter;
 import com.example.springmvch2blog.dto.CredentialsDto;
 import com.example.springmvch2blog.dto.UserDto;
 import com.example.springmvch2blog.entity.User;
@@ -51,12 +52,37 @@ public class AuthenticationService {
         logger.warn("EXPIRATION IN REFRESH TOKEN" + expiration.getTime());
         logger.warn("USER DTO OF NEW ACCESS TOKEN" + UserDtoUtil.toDto(findByToken(refreshToken))
                                                                 .toString());
-        String newAccessToken = jwtUtil.generateToken(UserDtoUtil.toDto(findByToken(refreshToken)));
+
+
+        return generateRefreshedAccessTokenCookie(refreshToken);
+    }
+
+    public Cookie generateRefreshedAccessTokenCookie(String refreshToken) {
+        String newAccessToken = jwtUtil.generateAccessToken(UserDtoUtil.toDto(findByToken(refreshToken)));
         //overwrite the old access token
         Cookie newAccessCookie = new Cookie(ACCESS_COOKIE_NAME, newAccessToken);
         newAccessCookie.setPath("/");
         newAccessCookie.setHttpOnly(true);
-        newAccessCookie.setMaxAge(5);
+
+        return newAccessCookie;
+    }
+
+
+    public Cookie generateRefreshTokenCookie(UserDto user) {
+        String refreshToken = jwtUtil.generateRefreshToken(user);
+        Cookie newAccessCookie = new Cookie(RefreshTokenFilter.REFRESH_COOKIE_NAME, refreshToken);
+        newAccessCookie.setPath("/");
+        newAccessCookie.setHttpOnly(true);
+
+        return newAccessCookie;
+    }
+
+    public Cookie generateAccesssTokenCookie(UserDto user) {
+        String refreshToken = jwtUtil.generateAccessToken(user);
+        Cookie newAccessCookie = new Cookie(ACCESS_COOKIE_NAME, refreshToken);
+        newAccessCookie.setPath("/");
+        newAccessCookie.setMaxAge(50000);
+        newAccessCookie.setHttpOnly(true);
 
         return newAccessCookie;
     }
