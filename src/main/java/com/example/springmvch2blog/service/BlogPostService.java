@@ -1,6 +1,5 @@
 package com.example.springmvch2blog.service;
 
-import com.example.springmvch2blog.controller.BlogPostController;
 import com.example.springmvch2blog.dto.BlogPostDto;
 import com.example.springmvch2blog.dto.CreatePostRequest;
 import com.example.springmvch2blog.dto.PostsResponse;
@@ -25,10 +24,11 @@ public class BlogPostService {
     private static final Logger logger = LoggerFactory.getLogger(BlogPostService.class);
 
     private final BlogPostRepository blogPostRepository;
-    public PostsResponse getBlogPostByOwnerId(Long id){
+
+    public PostsResponse getBlogPostByOwnerId(Long id) {
 
 
-       Optional<List<BlogPost>> posts = blogPostRepository.findBlogPostByOwnerId(id);
+        Optional<List<BlogPost>> posts = blogPostRepository.findBlogPostByOwnerId(id);
 
         return posts.map(blogPosts -> new PostsResponse(blogPosts.stream()
                                                                  .map(BlogPostDtoUtil::toDto)
@@ -38,15 +38,18 @@ public class BlogPostService {
     }
 
     @Transactional
-    public BlogPostDto createPostForUser(CreatePostRequest post, UserDto userDto){
+    public BlogPostDto createPostForUser(
+            CreatePostRequest post,
+            UserDto userDto
+    ) {
 
 
         BlogPost postIs = BlogPost.builder()
-                .ownerId(userDto.id())
-                .authorId(userDto.id())
-                .text(post.getText())
-                .title(post.getTitle())
-                .build();
+                                  .ownerId(userDto.getId())
+                                  .authorId(userDto.getId())
+                                  .text(post.getText())
+                                  .title(post.getTitle())
+                                  .build();
 
         logger.warn("POST OBJECT:" + postIs.getText() + " but before that it was " + post.getText());
 

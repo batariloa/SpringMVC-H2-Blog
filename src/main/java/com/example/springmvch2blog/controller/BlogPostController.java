@@ -1,7 +1,6 @@
 package com.example.springmvch2blog.controller;
 
 
-import com.example.springmvch2blog.config.UsernamePasswordFilter;
 import com.example.springmvch2blog.dto.BlogPostDto;
 import com.example.springmvch2blog.dto.CreatePostRequest;
 import com.example.springmvch2blog.dto.PostsResponse;
@@ -17,20 +16,24 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/post")
 @RequiredArgsConstructor
 public class BlogPostController {
-    private final BlogPostService blogPostService;
     private static final Logger logger = LoggerFactory.getLogger(BlogPostController.class);
+    private final BlogPostService blogPostService;
 
     @PostMapping
-    public BlogPostDto createNewPost(@AuthenticationPrincipal UserDto user, @RequestBody CreatePostRequest createPostRequest){
+    public BlogPostDto createNewPost(
+            @AuthenticationPrincipal UserDto user,
+            @RequestBody CreatePostRequest createPostRequest
+    ) {
 
 
-        logger.warn("Text"+ createPostRequest.getText() + " title " + createPostRequest.getTitle());
+        logger.warn("Text" + createPostRequest.getText() + " title " + createPostRequest.getTitle());
         return blogPostService.createPostForUser(createPostRequest, user);
     }
-    @GetMapping
-    public PostsResponse getLoggedInUsersPosts(@AuthenticationPrincipal UserDto user){
 
-        Long userId = user.id();
+    @GetMapping
+    public PostsResponse getLoggedInUsersPosts(@AuthenticationPrincipal UserDto user) {
+
+        Long userId = user.getId();
 
         return blogPostService.getBlogPostByOwnerId(userId);
 

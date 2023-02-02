@@ -1,6 +1,5 @@
 package com.example.springmvch2blog.service;
 
-import com.example.springmvch2blog.config.UsernamePasswordFilter;
 import com.example.springmvch2blog.dto.CredentialsDto;
 import com.example.springmvch2blog.dto.UserDto;
 import com.example.springmvch2blog.entity.User;
@@ -29,28 +28,29 @@ public class AuthenticationService {
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
 
-    public UserDto authenticate(CredentialsDto credentialsDto){
+    public UserDto authenticate(CredentialsDto credentialsDto) {
 
         UserDto user = userService.loadByEmail(credentialsDto.getEmail());
 
-        if(passwordEncoder.matches(credentialsDto.getPassword(), user.password())){
+        if (passwordEncoder.matches(credentialsDto.getPassword(), user.getPassword())) {
             return user;
         }
         throw new RuntimeException("Invalid credentials");
 
     }
 
-    public User findByToken(String token){
+    public User findByToken(String token) {
 
         String username = jwtUtil.getUsernameFromToken(token);
         return userService.loadByUsername(username);
     }
 
-    public Cookie refreshAccessTokenCookie(String refreshToken){
+    public Cookie refreshAccessTokenCookie(String refreshToken) {
 
-        Date expiration= jwtUtil.getExpirationDateFromToken(refreshToken);
-        logger.warn("EXPIRATION IN REFRESH TOKEN"+ expiration.getTime());
-        logger.warn("USER DTO OF NEW ACCESS TOKEN" + UserDtoUtil.toDto(findByToken(refreshToken)).toString());
+        Date expiration = jwtUtil.getExpirationDateFromToken(refreshToken);
+        logger.warn("EXPIRATION IN REFRESH TOKEN" + expiration.getTime());
+        logger.warn("USER DTO OF NEW ACCESS TOKEN" + UserDtoUtil.toDto(findByToken(refreshToken))
+                                                                .toString());
         String newAccessToken = jwtUtil.generateToken(UserDtoUtil.toDto(findByToken(refreshToken)));
         //overwrite the old access token
         Cookie newAccessCookie = new Cookie(ACCESS_COOKIE_NAME, newAccessToken);
@@ -60,7 +60,8 @@ public class AuthenticationService {
 
         return newAccessCookie;
     }
-    public boolean validateToken(String token){
+
+    public boolean validateToken(String token) {
         return jwtUtil.validateToken(token);
     }
 }

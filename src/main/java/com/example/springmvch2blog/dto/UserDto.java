@@ -2,14 +2,15 @@ package com.example.springmvch2blog.dto;
 
 
 import lombok.Builder;
-import lombok.ToString;
+import lombok.Data;
 
 
 @Builder
-
-public record UserDto(
-        Long id,
-        String username,
-        String password,
-        String email,
-        String role){}
+@Data
+public class UserDto {
+    private Long id;
+    private String username;
+    private String password;
+    private String email;
+    private String role;
+}

@@ -1,10 +1,7 @@
 package com.example.springmvch2blog.util;
 
 
-
-import com.example.springmvch2blog.config.UsernamePasswordFilter;
 import com.example.springmvch2blog.dto.UserDto;
-import com.example.springmvch2blog.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtParser;
@@ -24,14 +21,12 @@ import java.util.Map;
 @Component
 public class JwtUtil {
 
+    private static final Logger logger = LoggerFactory.getLogger(JwtUtil.class);
     @Value("${springbootwebfluxjjwt.jjwt.secret}")
     private String secret;
-
     @Value("${springbootwebfluxjjwt.jjwt.expiration}")
     private String expirationTime;
-
     private Key key;
-    private static final Logger logger = LoggerFactory.getLogger(JwtUtil.class);
 
     @PostConstruct
     public void init() {
@@ -67,13 +62,16 @@ public class JwtUtil {
 
         Map<String, Object> claims = new HashMap<>();
 
-        logger.warn("SET ROLES OF" + user.role());
-        claims.put("role", user.role());
+        ;
+        claims.put("role", user.getRole());
 
-        return doGenerateToken(claims, user.username());
+        return doGenerateToken(claims, user.getUsername());
     }
 
-    private String doGenerateToken(Map<String, Object> claims, String username) {
+    private String doGenerateToken(
+            Map<String, Object> claims,
+            String username
+    ) {
 
         Long expirationTimeLong = Long.parseLong(expirationTime);
 
@@ -94,15 +92,16 @@ public class JwtUtil {
 
         Map<String, Object> claims = new HashMap<>();
 
-        logger.warn("SET ROLES OF" + user.role()
-                                        );
-        claims.put("role", user.role()
-                             );
 
-        return doGenerateRefreshToken(claims, user.username());
+        claims.put("role", user.getRole());
+
+        return doGenerateRefreshToken(claims, user.getUsername());
     }
 
-    public String doGenerateRefreshToken(Map<String, Object> claims, String username) {
+    public String doGenerateRefreshToken(
+            Map<String, Object> claims,
+            String username
+    ) {
 
         Long expirationTimeLong = Long.parseLong(expirationTime);
 
