@@ -2,6 +2,7 @@ package com.example.springmvch2blog.util;
 
 
 
+import com.example.springmvch2blog.config.UsernamePasswordFilter;
 import com.example.springmvch2blog.dto.UserDto;
 import com.example.springmvch2blog.entity.User;
 import io.jsonwebtoken.Claims;
@@ -22,6 +23,7 @@ import java.util.Map;
 
 @Component
 public class JwtUtil {
+
     @Value("${springbootwebfluxjjwt.jjwt.secret}")
     private String secret;
 
@@ -76,7 +78,7 @@ public class JwtUtil {
         Long expirationTimeLong = Long.parseLong(expirationTime);
 
         final Date createdDate = new Date();
-        final Date expirationDate = new Date(createdDate.getTime() + expirationTimeLong * 5000);
+        final Date expirationDate = new Date(createdDate.getTime() + 500000);
 
 
         return Jwts.builder()
@@ -88,16 +90,16 @@ public class JwtUtil {
                    .compact();
     }
 
-    public String generateRefreshToken(User user) {
+    public String generateRefreshToken(UserDto user) {
 
         Map<String, Object> claims = new HashMap<>();
 
-        logger.warn("SET ROLES OF" + user.getRole()
+        logger.warn("SET ROLES OF" + user.role()
                                         );
-        claims.put("role", user.getRole()
+        claims.put("role", user.role()
                              );
 
-        return doGenerateRefreshToken(claims, user.getUsername());
+        return doGenerateRefreshToken(claims, user.username());
     }
 
     public String doGenerateRefreshToken(Map<String, Object> claims, String username) {

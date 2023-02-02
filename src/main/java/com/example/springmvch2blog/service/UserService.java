@@ -38,11 +38,11 @@ public class UserService {
         }
     }
 
-    public UserDto loadByUsername(String username) {
+    public User loadByUsername(String username) {
         Optional<User> user = userRepository.findByUsername(username);
         if (user.isPresent()) {
 
-            return UserDtoUtil.toDto(user.get());
+            return user.get();
         } else {
             throw new RuntimeException("User not found");
         }

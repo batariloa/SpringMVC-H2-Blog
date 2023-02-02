@@ -3,6 +3,7 @@ package com.example.springmvch2blog.config;
 import com.example.springmvch2blog.dto.CredentialsDto;
 import com.example.springmvch2blog.dto.UserDto;
 import com.example.springmvch2blog.service.AuthenticationService;
+import com.example.springmvch2blog.util.UserDtoUtil;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,7 @@ public class UserAuthenticationManager implements AuthenticationManager {
 
         UserDto userDto = null;
 
+        //if passed authentication is username and password
         if(authentication instanceof  UsernamePasswordAuthenticationToken){
 
             userDto = authenticationService.authenticate(new CredentialsDto((String) authentication.getPrincipal(),
@@ -36,17 +38,21 @@ public class UserAuthenticationManager implements AuthenticationManager {
             logger.warn("DTO " + userDto.toString());
 
         }
+        //if passed authentication is a JWT Cookie
         else if(authentication instanceof PreAuthenticatedAuthenticationToken){
 
-            userDto = authenticationService.findByToken((String) authentication.getPrincipal());
+            //
+            userDto = UserDtoUtil.toDto(authenticationService.findByToken((String) authentication.getPrincipal()));
         }
 
         if(userDto== null) {
             logger.warn("UserDto is null.");
             return null;
         }
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDto,
-                null, Collections.emptyList());
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                userDto,
+                null,
+                Collections.emptyList());
 
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         return authenticationToken;

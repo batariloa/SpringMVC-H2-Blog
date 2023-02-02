@@ -1,9 +1,7 @@
 package com.example.springmvch2blog;
 
-import com.example.springmvch2blog.config.CookieAuthenticationFilter;
-import com.example.springmvch2blog.config.UserAuthenticationEntryPoint;
-import com.example.springmvch2blog.config.UserAuthenticationManager;
-import com.example.springmvch2blog.config.UsernamePasswordFilter;
+import com.example.springmvch2blog.config.*;
+import com.example.springmvch2blog.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,6 +24,7 @@ import java.util.Arrays;
 public class SecurityConfig {
     private final UserAuthenticationEntryPoint userAuthenticationEntryPoint;
     private final UserAuthenticationManager userAuthenticationManager;
+    private final AuthenticationService authenticationService;
 
     @Bean
     public CorsFilter corsFilter() {
@@ -54,6 +53,7 @@ public class SecurityConfig {
                 .and()
                 .addFilterBefore(new UsernamePasswordFilter(userAuthenticationManager), BasicAuthenticationFilter.class)
                 .addFilterBefore(new CookieAuthenticationFilter(userAuthenticationManager), UsernamePasswordFilter.class)
+                .addFilterBefore(new RefreshTokenFilter(userAuthenticationManager, authenticationService), CookieAuthenticationFilter.class)
 
                 .csrf()
                 .disable()

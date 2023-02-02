@@ -5,6 +5,7 @@ import com.example.springmvch2blog.config.CookieAuthenticationFilter;
 import com.example.springmvch2blog.config.UsernamePasswordFilter;
 import com.example.springmvch2blog.dto.RegisterUserDto;
 import com.example.springmvch2blog.dto.UserDto;
+import com.example.springmvch2blog.entity.User;
 import com.example.springmvch2blog.service.AuthenticationService;
 import com.example.springmvch2blog.service.UserService;
 import com.example.springmvch2blog.util.JwtUtil;
@@ -44,18 +45,25 @@ public class AuthenticationController {
         Cookie authCookie = new Cookie(CookieAuthenticationFilter.ACCESS_COOKIE_NAME, jwtUtil.generateToken(user) );
         authCookie.setHttpOnly(true);
         authCookie.setSecure(true);
-        authCookie.setMaxAge(5000);
+        authCookie.setMaxAge(5);
         authCookie.setPath("/");
 
-        Cookie refreshCookie = new Cookie(CookieAuthenticationFilter.REFRESH_COOKIE_NAME, jwtUtil.generateToken(user) );
+        String refreshToken = jwtUtil.generateToken(user);
+        User userDb = userService.loadByUsername(user.username());
+        userDb.setRefreshToken(refreshToken);
+
+
+        Cookie refreshCookie = new Cookie(CookieAuthenticationFilter.REFRESH_COOKIE_NAME, refreshToken );
         refreshCookie.setHttpOnly(true);
         refreshCookie.setSecure(true);
-        refreshCookie.setMaxAge(100000);
+        refreshCookie.setMaxAge(10000000);
         refreshCookie.setPath("/");
 
 
 
         servletResponse.addCookie(authCookie);
+
+
         servletResponse.addCookie(refreshCookie);
 
         return ResponseEntity.ok(user);
@@ -65,5 +73,7 @@ public class AuthenticationController {
 
         return ResponseEntity.ok(userService.registerUser(user));
     }
+
+
 
 }
