@@ -46,7 +46,7 @@ public class AuthenticationService {
         return userService.loadByUsername(username);
     }
 
-    public Cookie refreshAccessToken(String refreshToken){
+    public Cookie refreshAccessTokenCookie(String refreshToken){
 
         Date expiration= jwtUtil.getExpirationDateFromToken(refreshToken);
         logger.warn("EXPIRATION IN REFRESH TOKEN"+ expiration.getTime());

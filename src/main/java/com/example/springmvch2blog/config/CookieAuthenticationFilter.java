@@ -19,7 +19,6 @@ import java.util.stream.Stream;
 @Component
 public class CookieAuthenticationFilter extends OncePerRequestFilter {
     public static final String ACCESS_COOKIE_NAME="accessToken";
-    public static final String REFRESH_COOKIE_NAME="refreshToken";
 
     private final UserAuthenticationManager userAuthenticationManager;
     private final AuthenticationService authenticationService;
@@ -31,27 +30,31 @@ public class CookieAuthenticationFilter extends OncePerRequestFilter {
 
         //if accessToken is available
         Optional<Cookie> accessTokenCookie = Stream.of(Optional.ofNullable(request.getCookies())
-                .orElse(new Cookie[0]))
-                .filter(cookie-> ACCESS_COOKIE_NAME.equals(cookie.getName()))
-                .findFirst();
+                                                               .orElse(new Cookie[0]))
+                                                   .filter(cookie -> ACCESS_COOKIE_NAME.equals(cookie.getName()))
+                                                   .findFirst();
 
 
-        boolean tokenCreated = accessTokenCookie.map(cookie -> {
-                                                    if (authenticationService.validateToken(cookie.getValue())) {
-                                                        userAuthenticationManager.authenticate(new PreAuthenticatedAuthenticationToken(cookie.getValue(), null));
-                                                        return true;
-                                                    }
-                                                    return false;
-                                                }).filter(result -> result)
-                                                .isPresent();
+        boolean tokenCreated;
+
+        //check if token is present and valid
+        tokenCreated = accessTokenCookie.map(cookie -> {
+                                            if (authenticationService.validateToken(cookie.getValue())) {
+
+                                                userAuthenticationManager.authenticate(new PreAuthenticatedAuthenticationToken(cookie.getValue(), null));
+
+                                                return false;
+                                            }
+                                            return true;
+                                        })
+                                        //if true is returned, map will contain 0 elements, therefore is not present
+                                        .filter(result -> result)
+                                        .isPresent();
 
         //if token is created, do not call other authentication filters
         if (!tokenCreated) {
             filterChain.doFilter(request, response);
         }
 
-
-
-
-}
+    }
     }

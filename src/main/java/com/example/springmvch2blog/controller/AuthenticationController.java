@@ -2,6 +2,7 @@ package com.example.springmvch2blog.controller;
 
 
 import com.example.springmvch2blog.config.CookieAuthenticationFilter;
+import com.example.springmvch2blog.config.RefreshTokenFilter;
 import com.example.springmvch2blog.config.UsernamePasswordFilter;
 import com.example.springmvch2blog.dto.RegisterUserDto;
 import com.example.springmvch2blog.dto.UserDto;
@@ -53,7 +54,7 @@ public class AuthenticationController {
         userDb.setRefreshToken(refreshToken);
 
 
-        Cookie refreshCookie = new Cookie(CookieAuthenticationFilter.REFRESH_COOKIE_NAME, refreshToken );
+        Cookie refreshCookie = new Cookie(RefreshTokenFilter.REFRESH_COOKIE_NAME, refreshToken );
         refreshCookie.setHttpOnly(true);
         refreshCookie.setSecure(true);
         refreshCookie.setMaxAge(10000000);
