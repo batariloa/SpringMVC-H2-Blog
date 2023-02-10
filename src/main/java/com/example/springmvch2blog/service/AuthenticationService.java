@@ -62,6 +62,8 @@ public class AuthenticationService {
         //overwrite the old access token
         Cookie newAccessCookie = new Cookie(ACCESS_COOKIE_NAME, newAccessToken);
         newAccessCookie.setPath("/");
+        newAccessCookie.setSecure(true);
+
         newAccessCookie.setHttpOnly(true);
 
         return newAccessCookie;
@@ -72,6 +74,7 @@ public class AuthenticationService {
         String refreshToken = jwtUtil.generateRefreshToken(user);
         Cookie newAccessCookie = new Cookie(RefreshTokenFilter.REFRESH_COOKIE_NAME, refreshToken);
         newAccessCookie.setPath("/");
+        newAccessCookie.setSecure(true);
         newAccessCookie.setHttpOnly(true);
 
         return newAccessCookie;
@@ -81,6 +84,7 @@ public class AuthenticationService {
         String refreshToken = jwtUtil.generateAccessToken(user);
         Cookie newAccessCookie = new Cookie(ACCESS_COOKIE_NAME, refreshToken);
         newAccessCookie.setPath("/");
+        newAccessCookie.setSecure(true);
         newAccessCookie.setMaxAge(50000);
         newAccessCookie.setHttpOnly(true);
 
