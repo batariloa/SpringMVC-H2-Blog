@@ -5,8 +5,6 @@ import com.example.springmvch2blog.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -15,8 +13,6 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
-
-import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -31,7 +27,7 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("http://localhost:3000");
+        config.addAllowedOrigin("https://blogster-frontend.herokuapp.com/");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);
@@ -39,36 +35,34 @@ public class SecurityConfig {
     }
 
 
-
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http
-                .cors()
-                .and()
+        return http.cors()
+                   .and()
 
-                .exceptionHandling().authenticationEntryPoint(userAuthenticationEntryPoint)
-                .and()
-                .httpBasic()
-                .and()
-                .addFilterBefore(new UsernamePasswordFilter(userAuthenticationManager), BasicAuthenticationFilter.class)
-                .addFilterBefore(new RefreshTokenFilter(userAuthenticationManager, authenticationService), UsernamePasswordFilter.class)
-                .addFilterBefore(new CookieAuthenticationFilter(userAuthenticationManager, authenticationService), RefreshTokenFilter.class)
-                //AccessTokenFilter is called before the RefreshTokenFilter
-                .csrf()
-                .disable()
+                   .exceptionHandling()
+                   .authenticationEntryPoint(userAuthenticationEntryPoint)
+                   .and()
+                   .httpBasic()
+                   .and()
+                   .addFilterBefore(new UsernamePasswordFilter(userAuthenticationManager), BasicAuthenticationFilter.class)
+                   .addFilterBefore(new RefreshTokenFilter(userAuthenticationManager, authenticationService), UsernamePasswordFilter.class)
+                   .addFilterBefore(new CookieAuthenticationFilter(userAuthenticationManager, authenticationService), RefreshTokenFilter.class)
+                   //AccessTokenFilter is called before the RefreshTokenFilter
+                   .csrf()
+                   .disable()
 
-            .authorizeHttpRequests((requests) -> {
+                   .authorizeHttpRequests((requests) -> {
 
-                requests.requestMatchers("/auth/*")
-                        .permitAll()
-                        .anyRequest()
-                        .authenticated();
-            })
+                       requests.requestMatchers("/auth/*")
+                               .permitAll()
+                               .anyRequest()
+                               .authenticated();
+                   })
 
-            .sessionManagement()
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
-            .build();
+                   .sessionManagement()
+                   .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                   .and()
+                   .build();
     }
 }
