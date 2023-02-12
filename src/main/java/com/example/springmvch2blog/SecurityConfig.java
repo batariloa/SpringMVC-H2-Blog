@@ -4,6 +4,7 @@ import com.example.springmvch2blog.config.*;
 import com.example.springmvch2blog.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.servlet.server.CookieSameSiteSupplier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -26,6 +27,10 @@ public class SecurityConfig {
     @Value("${frontend.url}")
     private String frontendURL;
 
+    @Bean
+    public CookieSameSiteSupplier applicationCookieSameSiteSupplier() {
+        return CookieSameSiteSupplier.ofNone();
+    }
 
     @Bean
     public CorsFilter corsFilter() {
