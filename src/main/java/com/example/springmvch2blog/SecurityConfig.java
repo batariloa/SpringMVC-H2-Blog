@@ -26,6 +26,7 @@ public class SecurityConfig {
     @Value("${frontend.url}")
     private String frontendURL;
 
+
     @Bean
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
