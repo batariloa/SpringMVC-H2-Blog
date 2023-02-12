@@ -3,6 +3,7 @@ package com.example.springmvch2blog;
 import com.example.springmvch2blog.config.*;
 import com.example.springmvch2blog.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -22,12 +23,15 @@ public class SecurityConfig {
     private final UserAuthenticationManager userAuthenticationManager;
     private final AuthenticationService authenticationService;
 
+    @Value("${frontend.url}")
+    private String frontendURL;
+
     @Bean
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("https://blogster-frontend.herokuapp.com/");
+        config.addAllowedOrigin(frontendURL);
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);
